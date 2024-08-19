@@ -1,0 +1,53 @@
+version: '3.5'
+services:
+    app:
+        build:
+            context: '.'
+        container_name: test_filament
+        volumes:
+            - .:/var/www/html
+            - ./docker/php.ini:/usr/local/etc/php/php.ini
+        ports:
+            - 11000:80
+        environment:
+            TZ: Asia/Tokyo
+            APACHE_DOCUMENT_ROOT: /var/www/html/public
+        restart: always
+        
+    db:
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: 12345
+            MYSQL_DATABASE: mydatabase
+            TZ: Asia/Tokyo
+        volumes:
+            - ./docker/db/mysql_data:/var/lib/mysql
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+            --innodb-use-native-aio=0
+        restart: always
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links:
+        - db
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            UPLOAD_LIMIT: 500M
+            # more options
+            # https://hub.docker.com/r/phpmyadmin/phpmyadmin/
+        ports:
+        - '31000:80'
+        restart: always
+
+    node:
+        # https://nodejs.org/en/ LTSのバージョンを指定する
+        image: node:20-alpine
+        working_dir: /app
+        environment:
+            - NODE_ENV=development
+        volumes:
+            - .:/app
+        #jsなどをbuildするだけであればport指定は不要。(公開しない)
+        #ports:
+        #    - 50000:3000
