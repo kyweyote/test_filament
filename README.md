@@ -7,9 +7,9 @@ patient management system using Docker and Laravel's filament
 ## Features
 - owner view, create, update, delete 
 - patient view, create, update, delete
-- which treatement gives to which patient
+- which treatment gives to which patient
 - overview of patient count group by disease 
-- graph of treatement
+- graph of treatment
 
 
 ## Installation
